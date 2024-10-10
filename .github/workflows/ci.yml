@@ -1,13 +1,14 @@
 name: CI
 on:
   pull_request: {}
+  workflow_dispatch:
   push:
     branches:
       - main
-      - '*.*.x'
+      - "*.*.x"
     tags:
-      - '*.*'
-      - '*.*.*'
+      - "*.*"
+      - "*.*.*"
 
 permissions:
   contents: read
@@ -21,38 +22,121 @@ env:
   CARGO_INCREMENTAL: 0
 
 jobs:
-  linux: 
-    runs-on: ubuntu-latest 
+  linux:
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         PYTHON:
-          - {VERSION: "3.12", NOXSESSION: "flake"}
-          - {VERSION: "3.12", NOXSESSION: "rust"}
-          - {VERSION: "3.12", NOXSESSION: "docs", OPENSSL: {TYPE: "openssl", VERSION: "3.2.3"}}
-          - {VERSION: "3.13-dev", NOXSESSION: "tests"}
-          - {VERSION: "pypy-3.10", NOXSESSION: "tests-nocoverage"}
-          - {VERSION: "3.12", NOXSESSION: "tests", OPENSSL: {TYPE: "openssl", VERSION: "3.0.15"}}
-          - {VERSION: "3.12", NOXSESSION: "tests", OPENSSL: {TYPE: "openssl", VERSION: "3.1.7"}}
-          - {VERSION: "3.12", NOXSESSION: "tests-ssh", OPENSSL: {TYPE: "openssl", VERSION: "3.2.3"}}
-          - {VERSION: "3.12", NOXSESSION: "tests-ssh", OPENSSL: {TYPE: "openssl", VERSION: "3.3.2"}}
-          - {VERSION: "3.12", NOXSESSION: "tests", OPENSSL: {TYPE: "openssl", VERSION: "3.2.3", CONFIG_FLAGS: "no-engine no-rc2 no-srtp no-ct no-psk"}}
-          - {VERSION: "3.12", NOXSESSION: "tests", OPENSSL: {TYPE: "openssl", VERSION: "3.2.3", CONFIG_FLAGS: "no-legacy", NO_LEGACY: "1"}}
-          - {VERSION: "3.12", NOXSESSION: "tests", NOXARGS: "--enable-fips=1", OPENSSL: {TYPE: "openssl", CONFIG_FLAGS: "enable-fips", VERSION: "3.1.7"}}
-          - {VERSION: "3.12", NOXSESSION: "tests", NOXARGS: "--enable-fips=1", OPENSSL: {TYPE: "openssl", CONFIG_FLAGS: "enable-fips", VERSION: "3.2.3"}}
-          - {VERSION: "3.12", NOXSESSION: "rust,tests", OPENSSL: {TYPE: "libressl", VERSION: "3.8.4"}}
-          - {VERSION: "3.12", NOXSESSION: "rust,tests", OPENSSL: {TYPE: "libressl", VERSION: "3.9.2"}}
-          - {VERSION: "3.12", NOXSESSION: "tests-randomorder"}
+          - { VERSION: "3.12", NOXSESSION: "flake" }
+          - { VERSION: "3.12", NOXSESSION: "rust" }
+          - {
+              VERSION: "3.12",
+              NOXSESSION: "docs",
+              OPENSSL: { TYPE: "openssl", VERSION: "3.2.3" },
+            }
+          - { VERSION: "3.13-dev", NOXSESSION: "tests" }
+          - { VERSION: "pypy-3.10", NOXSESSION: "tests-nocoverage" }
+          - {
+              VERSION: "3.12",
+              NOXSESSION: "tests",
+              OPENSSL: { TYPE: "openssl", VERSION: "3.0.15" },
+            }
+          - {
+              VERSION: "3.12",
+              NOXSESSION: "tests",
+              OPENSSL: { TYPE: "openssl", VERSION: "3.1.7" },
+            }
+          - {
+              VERSION: "3.12",
+              NOXSESSION: "tests-ssh",
+              OPENSSL: { TYPE: "openssl", VERSION: "3.2.3" },
+            }
+          - {
+              VERSION: "3.12",
+              NOXSESSION: "tests-ssh",
+              OPENSSL: { TYPE: "openssl", VERSION: "3.3.2" },
+            }
+          - {
+              VERSION: "3.12",
+              NOXSESSION: "tests",
+              OPENSSL:
+                {
+                  TYPE: "openssl",
+                  VERSION: "3.2.3",
+                  CONFIG_FLAGS: "no-engine no-rc2 no-srtp no-ct no-psk",
+                },
+            }
+          - {
+              VERSION: "3.12",
+              NOXSESSION: "tests",
+              OPENSSL:
+                {
+                  TYPE: "openssl",
+                  VERSION: "3.2.3",
+                  CONFIG_FLAGS: "no-legacy",
+                  NO_LEGACY: "1",
+                },
+            }
+          - {
+              VERSION: "3.12",
+              NOXSESSION: "tests",
+              NOXARGS: "--enable-fips=1",
+              OPENSSL:
+                {
+                  TYPE: "openssl",
+                  CONFIG_FLAGS: "enable-fips",
+                  VERSION: "3.1.7",
+                },
+            }
+          - {
+              VERSION: "3.12",
+              NOXSESSION: "tests",
+              NOXARGS: "--enable-fips=1",
+              OPENSSL:
+                {
+                  TYPE: "openssl",
+                  CONFIG_FLAGS: "enable-fips",
+                  VERSION: "3.2.3",
+                },
+            }
+          - {
+              VERSION: "3.12",
+              NOXSESSION: "rust,tests",
+              OPENSSL: { TYPE: "libressl", VERSION: "3.8.4" },
+            }
+          - {
+              VERSION: "3.12",
+              NOXSESSION: "rust,tests",
+              OPENSSL: { TYPE: "libressl", VERSION: "3.9.2" },
+            }
+          - { VERSION: "3.12", NOXSESSION: "tests-randomorder" }
           # Latest commit on the BoringSSL master branch, as of Sep 04, 2024.
-          - {VERSION: "3.12", NOXSESSION: "rust,tests", OPENSSL: {TYPE: "boringssl", VERSION: "6763c954da6b9c7ff4e4c1a335c3833c55a0ec05"}}
+          - {
+              VERSION: "3.12",
+              NOXSESSION: "rust,tests",
+              OPENSSL:
+                {
+                  TYPE: "boringssl",
+                  VERSION: "6763c954da6b9c7ff4e4c1a335c3833c55a0ec05",
+                },
+            }
           # Latest commit on the OpenSSL master branch, as of Sep 04, 2024.
-          - {VERSION: "3.12", NOXSESSION: "tests", OPENSSL: {TYPE: "openssl", VERSION: "bbe4571f570ec28b4709746b6d4d624ca5394cc6"}}
+          - {
+              VERSION: "3.12",
+              NOXSESSION: "tests",
+              OPENSSL:
+                {
+                  TYPE: "openssl",
+                  VERSION: "bbe4571f570ec28b4709746b6d4d624ca5394cc6",
+                },
+            }
           # Builds with various Rust versions. Includes MSRV and next
           # potential future MSRV.
-          - {VERSION: "3.12", NOXSESSION: "rust,tests", RUST: "1.65.0"}
-          - {VERSION: "3.12", NOXSESSION: "rust,tests", RUST: "beta"}
-          - {VERSION: "3.12", NOXSESSION: "rust,tests", RUST: "nightly"}
-          - {VERSION: "3.12", NOXSESSION: "tests-rust-debug"}
+          - { VERSION: "3.12", NOXSESSION: "rust,tests", RUST: "1.65.0" }
+          - { VERSION: "3.12", NOXSESSION: "rust,tests", RUST: "beta" }
+          - { VERSION: "3.12", NOXSESSION: "rust,tests", RUST: "nightly" }
+          - { VERSION: "3.12", NOXSESSION: "tests-rust-debug" }
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
@@ -127,13 +211,13 @@ jobs:
       - run: python -m pip install -c ci-constraints-requirements.txt 'nox' 'tomli; python_version < "3.11"'
       - name: Create nox environment
         run: |
-            nox -v --install-only
+          nox -v --install-only
         env:
           NOXSESSION: ${{ matrix.PYTHON.NOXSESSION }}
           CARGO_TARGET_DIR: ${{ format('{0}/src/rust/target/', github.workspace) }}
       - name: Tests
         run: |
-            nox --no-install --  --color=yes --wycheproof-root=wycheproof --x509-limbo-root=x509-limbo ${{ matrix.PYTHON.NOXARGS }}
+          nox --no-install --  --color=yes --wycheproof-root=wycheproof --x509-limbo-root=x509-limbo ${{ matrix.PYTHON.NOXARGS }}
         env:
           NOXSESSION: ${{ matrix.PYTHON.NOXSESSION }}
           COLUMNS: 80
@@ -148,24 +232,91 @@ jobs:
       fail-fast: false
       matrix:
         PYTHON:
-          - {VERSION: "3.12", NOXSESSION: "flake"}
-          - {VERSION: "3.12", NOXSESSION: "rust"}
-          - {VERSION: "3.12", NOXSESSION: "docs", OPENSSL: {TYPE: "openssl", VERSION: "3.2.3"}}
-          - {VERSION: "3.12", NOXSESSION: "tests", OPENSSL: {TYPE: "openssl", VERSION: "3.0.15"}}
-          - {VERSION: "3.12", NOXSESSION: "tests", OPENSSL: {TYPE: "openssl", VERSION: "3.1.7"}}
-          - {VERSION: "3.12", NOXSESSION: "tests-ssh", OPENSSL: {TYPE: "openssl", VERSION: "3.2.3"}}
-          - {VERSION: "3.12", NOXSESSION: "tests-ssh", OPENSSL: {TYPE: "openssl", VERSION: "3.3.2"}}
-          - {VERSION: "3.12", NOXSESSION: "tests", OPENSSL: {TYPE: "openssl", VERSION: "3.2.3", CONFIG_FLAGS: "\"no-engine no-rc2 no-srtp no-ct no-psk\""}}
-          - {VERSION: "3.12", NOXSESSION: "tests", OPENSSL: {TYPE: "openssl", VERSION: "3.2.3", CONFIG_FLAGS: "no-legacy", NO_LEGACY: "1"}}
-          - {VERSION: "3.12", NOXSESSION: "tests", NOXARGS: "--enable-fips=1", OPENSSL: {TYPE: "openssl", CONFIG_FLAGS: "enable-fips", VERSION: "3.1.7"}}
-          - {VERSION: "3.12", NOXSESSION: "tests", NOXARGS: "--enable-fips=1", OPENSSL: {TYPE: "openssl", CONFIG_FLAGS: "enable-fips", VERSION: "3.2.3"}}
-          - {VERSION: "3.12", NOXSESSION: "rust,tests", OPENSSL: {TYPE: "libressl", VERSION: "3.8.4"}}
-          - {VERSION: "3.12", NOXSESSION: "rust,tests", OPENSSL: {TYPE: "libressl", VERSION: "3.9.2"}}
-          - {VERSION: "3.12", NOXSESSION: "tests-randomorder"}
-          - {VERSION: "3.12", NOXSESSION: "rust,tests", RUST: "1.65.0"}
-          - {VERSION: "3.12", NOXSESSION: "rust,tests", RUST: "beta"}
-          - {VERSION: "3.12", NOXSESSION: "rust,tests", RUST: "nightly"}
-          - {VERSION: "3.12", NOXSESSION: "tests-rust-debug"}
+          - { VERSION: "3.12", NOXSESSION: "flake" }
+          - { VERSION: "3.12", NOXSESSION: "rust" }
+          - {
+              VERSION: "3.12",
+              NOXSESSION: "docs",
+              OPENSSL: { TYPE: "openssl", VERSION: "3.2.3" },
+            }
+          - {
+              VERSION: "3.12",
+              NOXSESSION: "tests",
+              OPENSSL: { TYPE: "openssl", VERSION: "3.0.15" },
+            }
+          - {
+              VERSION: "3.12",
+              NOXSESSION: "tests",
+              OPENSSL: { TYPE: "openssl", VERSION: "3.1.7" },
+            }
+          - {
+              VERSION: "3.12",
+              NOXSESSION: "tests-ssh",
+              OPENSSL: { TYPE: "openssl", VERSION: "3.2.3" },
+            }
+          - {
+              VERSION: "3.12",
+              NOXSESSION: "tests-ssh",
+              OPENSSL: { TYPE: "openssl", VERSION: "3.3.2" },
+            }
+          - {
+              VERSION: "3.12",
+              NOXSESSION: "tests",
+              OPENSSL:
+                {
+                  TYPE: "openssl",
+                  VERSION: "3.2.3",
+                  CONFIG_FLAGS: '"no-engine no-rc2 no-srtp no-ct no-psk"',
+                },
+            }
+          - {
+              VERSION: "3.12",
+              NOXSESSION: "tests",
+              OPENSSL:
+                {
+                  TYPE: "openssl",
+                  VERSION: "3.2.3",
+                  CONFIG_FLAGS: "no-legacy",
+                  NO_LEGACY: "1",
+                },
+            }
+          - {
+              VERSION: "3.12",
+              NOXSESSION: "tests",
+              NOXARGS: "--enable-fips=1",
+              OPENSSL:
+                {
+                  TYPE: "openssl",
+                  CONFIG_FLAGS: "enable-fips",
+                  VERSION: "3.1.7",
+                },
+            }
+          - {
+              VERSION: "3.12",
+              NOXSESSION: "tests",
+              NOXARGS: "--enable-fips=1",
+              OPENSSL:
+                {
+                  TYPE: "openssl",
+                  CONFIG_FLAGS: "enable-fips",
+                  VERSION: "3.2.3",
+                },
+            }
+          - {
+              VERSION: "3.12",
+              NOXSESSION: "rust,tests",
+              OPENSSL: { TYPE: "libressl", VERSION: "3.8.4" },
+            }
+          - {
+              VERSION: "3.12",
+              NOXSESSION: "rust,tests",
+              OPENSSL: { TYPE: "libressl", VERSION: "3.9.2" },
+            }
+          - { VERSION: "3.12", NOXSESSION: "tests-randomorder" }
+          - { VERSION: "3.12", NOXSESSION: "rust,tests", RUST: "1.65.0" }
+          - { VERSION: "3.12", NOXSESSION: "rust,tests", RUST: "beta" }
+          - { VERSION: "3.12", NOXSESSION: "rust,tests", RUST: "nightly" }
+          - { VERSION: "3.12", NOXSESSION: "tests-rust-debug" }
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
         with:
@@ -177,11 +328,11 @@ jobs:
         run: |
           echo "IMAGE_NAME=ppc64le-python-image-${{ github.run_id }}" >> $GITHUB_ENV
           echo "CONTAINER_NAME=ppc64le-cryptography-container-${{ github.run_id }}" >> $GITHUB_ENV
-  
+
       - name: Build Docker image
         run: |
-            docker build -t $IMAGE_NAME -f ppc64le.dockerfile .
-      
+          docker build -t $IMAGE_NAME -f ppc64le.dockerfile .
+
       - name: Create and start Docker container
         run: |
           docker run --name $CONTAINER_NAME -d $IMAGE_NAME tail -f /dev/null
@@ -214,12 +365,12 @@ jobs:
           $RUST_OPTION"
 
       - name: Clean up Docker image and container
-        if: always()  # Ensures cleanup runs even if previous steps fail
+        if: always() # Ensures cleanup runs even if previous steps fail
         run: |
           docker stop $CONTAINER_NAME
           docker rm $CONTAINER_NAME
           docker rmi $IMAGE_NAME:latest
-          
+
   distros:
     runs-on: ${{ matrix.IMAGE.RUNNER }}
     container: ghcr.io/pyca/cryptography-runner-${{ matrix.IMAGE.IMAGE }}
@@ -227,23 +378,61 @@ jobs:
       fail-fast: false
       matrix:
         IMAGE:
-          - {IMAGE: "rhel8", NOXSESSION: "tests", RUNNER: "ubuntu-latest"}
-          - {IMAGE: "rhel8-fips", NOXSESSION: "tests", RUNNER: "ubuntu-latest", FIPS: true}
-          - {IMAGE: "bullseye", NOXSESSION: "tests", RUNNER: "ubuntu-latest"}
-          - {IMAGE: "bookworm", NOXSESSION: "tests", RUNNER: "ubuntu-latest"}
-          - {IMAGE: "trixie", NOXSESSION: "tests", RUNNER: "ubuntu-latest"}
-          - {IMAGE: "sid", NOXSESSION: "tests", RUNNER: "ubuntu-latest"}
-          - {IMAGE: "ubuntu-focal", NOXSESSION: "tests", RUNNER: "ubuntu-latest"}
-          - {IMAGE: "ubuntu-jammy", NOXSESSION: "tests", RUNNER: "ubuntu-latest"}
-          - {IMAGE: "ubuntu-noble", NOXSESSION: "tests", RUNNER: "ubuntu-latest"}
-          - {IMAGE: "ubuntu-rolling", NOXSESSION: "tests", RUNNER: "ubuntu-latest"}
-          - {IMAGE: "fedora", NOXSESSION: "tests", RUNNER: "ubuntu-latest"}
-          - {IMAGE: "alpine", NOXSESSION: "tests", RUNNER: "ubuntu-latest"}
-          - {IMAGE: "centos-stream9", NOXSESSION: "tests", RUNNER: "ubuntu-latest"}
-          - {IMAGE: "centos-stream9-fips", NOXSESSION: "tests", RUNNER: "ubuntu-latest", FIPS: true}
+          - { IMAGE: "rhel8", NOXSESSION: "tests", RUNNER: "ubuntu-latest" }
+          - {
+              IMAGE: "rhel8-fips",
+              NOXSESSION: "tests",
+              RUNNER: "ubuntu-latest",
+              FIPS: true,
+            }
+          - { IMAGE: "bullseye", NOXSESSION: "tests", RUNNER: "ubuntu-latest" }
+          - { IMAGE: "bookworm", NOXSESSION: "tests", RUNNER: "ubuntu-latest" }
+          - { IMAGE: "trixie", NOXSESSION: "tests", RUNNER: "ubuntu-latest" }
+          - { IMAGE: "sid", NOXSESSION: "tests", RUNNER: "ubuntu-latest" }
+          - {
+              IMAGE: "ubuntu-focal",
+              NOXSESSION: "tests",
+              RUNNER: "ubuntu-latest",
+            }
+          - {
+              IMAGE: "ubuntu-jammy",
+              NOXSESSION: "tests",
+              RUNNER: "ubuntu-latest",
+            }
+          - {
+              IMAGE: "ubuntu-noble",
+              NOXSESSION: "tests",
+              RUNNER: "ubuntu-latest",
+            }
+          - {
+              IMAGE: "ubuntu-rolling",
+              NOXSESSION: "tests",
+              RUNNER: "ubuntu-latest",
+            }
+          - { IMAGE: "fedora", NOXSESSION: "tests", RUNNER: "ubuntu-latest" }
+          - { IMAGE: "alpine", NOXSESSION: "tests", RUNNER: "ubuntu-latest" }
+          - {
+              IMAGE: "centos-stream9",
+              NOXSESSION: "tests",
+              RUNNER: "ubuntu-latest",
+            }
+          - {
+              IMAGE: "centos-stream9-fips",
+              NOXSESSION: "tests",
+              RUNNER: "ubuntu-latest",
+              FIPS: true,
+            }
 
-          - {IMAGE: "ubuntu-rolling:aarch64", NOXSESSION: "tests", RUNNER: [self-hosted, Linux, ARM64]}
-          - {IMAGE: "alpine:aarch64", NOXSESSION: "tests", RUNNER: [self-hosted, Linux, ARM64]}
+          - {
+              IMAGE: "ubuntu-rolling:aarch64",
+              NOXSESSION: "tests",
+              RUNNER: [self-hosted, Linux, ARM64],
+            }
+          - {
+              IMAGE: "alpine:aarch64",
+              NOXSESSION: "tests",
+              RUNNER: [self-hosted, Linux, ARM64],
+            }
     timeout-minutes: 15
     env:
       RUSTUP_HOME: /root/.rustup
@@ -277,7 +466,7 @@ jobs:
           echo "OPENSSL_FORCE_FIPS_MODE=1" >> $GITHUB_ENV
         if: matrix.IMAGE.FIPS
       - run: /venv/bin/python -m pip install -c ci-constraints-requirements.txt 'nox' 'tomli; python_version < "3.11"'
-      - run: '/venv/bin/nox -v --install-only'
+      - run: "/venv/bin/nox -v --install-only"
         env:
           CARGO_TARGET_DIR: ${{ format('{0}/src/rust/target/', github.workspace) }}
           # OPENSSL_ENABLE_SHA1_SIGNATURES is for CentOS 9 Stream
@@ -297,15 +486,15 @@ jobs:
       fail-fast: false
       matrix:
         RUNNER:
-          - {OS: 'macos-13', ARCH: 'x86_64'}
-          - {OS: 'macos-14', ARCH: 'arm64'}
+          - { OS: "macos-13", ARCH: "x86_64" }
+          - { OS: "macos-14", ARCH: "arm64" }
         PYTHON:
-          - {VERSION: "3.7", NOXSESSION: "tests-nocoverage"}
-          - {VERSION: "3.12", NOXSESSION: "tests"}
+          - { VERSION: "3.7", NOXSESSION: "tests-nocoverage" }
+          - { VERSION: "3.12", NOXSESSION: "tests" }
         exclude:
           # We only test latest Python on arm64. py37 won't work since there's no universal2 binary
-          - PYTHON: {VERSION: "3.7", NOXSESSION: "tests-nocoverage"}
-            RUNNER: {OS: 'macos-14', ARCH: 'arm64'}
+          - PYTHON: { VERSION: "3.7", NOXSESSION: "tests-nocoverage" }
+            RUNNER: { OS: "macos-14", ARCH: "arm64" }
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
@@ -365,11 +554,11 @@ jobs:
       fail-fast: false
       matrix:
         WINDOWS:
-          - {ARCH: 'x86', WINDOWS: 'win32'}
-          - {ARCH: 'x64', WINDOWS: 'win64'}
+          - { ARCH: "x86", WINDOWS: "win32" }
+          - { ARCH: "x64", WINDOWS: "win64" }
         PYTHON:
-          - {VERSION: "3.7", NOXSESSION: "tests-nocoverage"}
-          - {VERSION: "3.12", NOXSESSION: "tests"}
+          - { VERSION: "3.7", NOXSESSION: "tests-nocoverage" }
+          - { VERSION: "3.12", NOXSESSION: "tests" }
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
@@ -404,7 +593,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Configure
         run: |
-            echo "OPENSSL_DIR=C:/openssl-${{ matrix.WINDOWS.WINDOWS }}" >> $GITHUB_ENV
+          echo "OPENSSL_DIR=C:/openssl-${{ matrix.WINDOWS.WINDOWS }}" >> $GITHUB_ENV
         shell: bash
 
       - name: Clone test vectors
@@ -442,7 +631,7 @@ jobs:
           - mitmproxy
           - scapy
         PYTHON:
-          - '3.12'
+          - "3.12"
     name: "Downstream tests for ${{ matrix.DOWNSTREAM }}"
     timeout-minutes: 15
     steps:
@@ -502,7 +691,7 @@ jobs:
         if: ${{ always() }}
         uses: actions/setup-python@f677139bbe7f9c59b41e40162b753c062f5d49a3 # v5.2.0
         with:
-          python-version: '3.12'
+          python-version: "3.12"
           cache: pip
           cache-dependency-path: ci-constraints-requirements.txt
         timeout-minutes: 3
